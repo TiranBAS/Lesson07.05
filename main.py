@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
         # Вызываем конструктор самого класса Sprite
         super().__init__()
         # Загружаем изображение
-        self.image = pygame.image.load('smile1.png')
+        self.image = pygame.image.load('smile.png')
         # Настраиваем его. Не нужно здесь ничего менять, просто копируйте
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
