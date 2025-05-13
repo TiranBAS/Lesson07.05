@@ -13,10 +13,10 @@ all_sprites = pygame.sprite.Group()
 FPS = 60
 clock = pygame.time.Clock()
 
-background_image = pygame.image.load("ec9d8d335442347d154a9d8f02fa04cf.jpg")
+background_image = pygame.image.load("gg.jpg")
 background_image = pygame.transform.scale(background_image, (width, height))
 
-background_image2 = pygame.image.load("ec9d8d335442347d154a9d8f02fa04cf.jpg")
+background_image2 = pygame.image.load("gg.jpg")
 background_image2 = pygame.transform.scale(background_image2, (width, height))
 
 background_X1 = 0
@@ -43,3 +43,11 @@ while True:
 
     pygame.display.update()
     clock.tick(FPS)
+
+
+def render():
+    return None
+
+
+def timer():
+    return None

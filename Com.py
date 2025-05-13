@@ -1,7 +1,7 @@
-from threading import Timer
-import pygame
+#from threading import Timer
+#import pygame
 
-pygame.init()
+#pygame.init()
 
 width, height = 500, 500
 

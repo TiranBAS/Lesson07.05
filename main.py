@@ -1,70 +1,156 @@
-import Enemy
+# Подключаем pygame
 from threading import Timer
+from tokenize import group
+
 import pygame
-import sys
+import pygame
 
-# Инициализация Pygame
+from Common import render, timer
+from Common import *
+
+import Common
 pygame.init()
+# Создаем класс игрока
+class Player(pygame.sprite.Sprite):
+    # Создаем инициализатор(конструктор)
+    def __init__(self, *group):
+        # Вызываем конструктор самого класса Sprite
+        super().__init__(*group)
+        # Загружаем изображение
+        self.image = pygame.image.load('player.png')
+        # Настраиваем его. Не нужно здесь ничего менять, просто копируйте
+        self.image = self.image.convert()
+        colorkey = self.image.get_at((0, 0))
+        self.image.set_colorkey(colorkey)
+        # Задаем размер(ЕСЛИ НУЖНО. ЕСЛИ НЕ НУЖНО - НЕ ПИШИТЕ ЭТУ СТРОКУ). Первая 100 - ширина картинки, вторая 100 - высота картинки
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        # Задаем границы описывающего прямоугольника
+        self.rect = self.image.get_rect()
 
-# Настройки окна
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Спасение Лунного Кота")
+    # Функция, которая определяет что будет происходить с игроком при обновлении экрана
+    def update(self):
+        # Определяем какие клавиши клавиатуры были нажаты
+        keys = pygame.key.get_pressed()
+        # Если нажата стрелка вверх
+        if keys[pygame.K_UP]:
+            # Двигаемся вверх   `1` *
+            self.rect.top -= 5
+        # Если нажата стрелка влево
+        if keys[pygame.K_DOWN]:
+            # Двигаемся вниз
+            self.rect.top += 5
+            # Если нажата стрелка вниз
+        if keys[pygame.K_LEFT]:
+            # Двигаемся влево
+            self.rect.left -= 5
+            # Если нажата стрелка вправо
+        if keys[pygame.K_RIGHT]:
+            # Двигаемся вправо
+            self.rect.left += 5
+        elif keys[pygame.K_SPACE]:
+            bullet = Bullet(bullets_sprites)
+            bullet.rect.bottom = self.rect.bottom
+            bullet.rect.centerx = self.rect.centerx
 
-# Цвета
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = pygame.image.load('Enemy.png')
+        self.image = pygame.transform.scale(self.image, (40, 20))
+        self.rect = self.image.get_rect()
 
-# Игрок (Луник)
-player_size = 50
-player_x = 100
-player_y = HEIGHT - player_size - 50
-player_speed = 5
-jump_height = 15
-is_jumping = False
-jump_count = jump_height
+    def update(self):
+        if self.rect.right < width:
+            self.rect.top += 5
+        else:
+            bullets_sprites.remove(self)
 
-# Гравитация
-gravity = 1
-
-# Игровой цикл
-clock = pygame.time.Clock()
-running = True
-
-while running:
-    screen.fill(BLACK)
-
-    # Обработка событий
+while not game_over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            game_over = True
+            timer.join()
+            exit()
 
-    # Управление
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and player_x > 0:
-        player_x -= player_speed
-    if keys[pygame.K_RIGHT] and player_x < WIDTH - player_size:
-        player_x += player_speed
-    if not is_jumping:
-        if keys[pygame.K_SPACE]:
-            is_jumping = True
-    else:
-        if jump_count >= -jump_height:
-            neg = 1
-            if jump_count < 0:
-                neg = -1
-            player_y -= (jump_count ** 2) * 0.5 * neg
-            jump_count -= 1
-        else:
-            is_jumping = False
-            jump_count = jump_height
+    render()
 
-    # Отрисовка игрока (пока просто квадрат)
-    pygame.draw.rect(screen, BLUE, (player_x, player_y, player_size, player_size))
+all_sprites = pygame.sprite.Group()
+player = Player(all_sprites)
 
-    pygame.display.update()
-    clock.tick(60)
+bullets_sprites = pygame.sprite.Group()
 
-pygame.quit()
-sys.exit()
+
+# Создаем класс противника
+class Enemy(pygame.sprite.Sprite):
+    # Создаем инициализатор(конструктор)
+    def __init__(self, *group):
+        # Вызываем конструктор самого класса Sprite
+        super().__init__(*group)
+        # Загружаем изображение
+        self.image = pygame.image.load('Enemy.png')
+        # Настраиваем его. Не нужно здесь ничего менять, просто копируйте
+        self.image = self.image.convert()
+        colorkey = self.image.get_at((0, 0))
+        self.image.set_colorkey(colorkey)
+        # Задаем размер(ЕСЛИ НУЖНО. ЕСЛИ НЕ НУЖНО - НЕ ПИШИТЕ ЭТУ СТРОКУ). Первая 100 - ширина картинки, вторая 100 - высота картинки
+        self.image = pygame.transform.scale(self.image, (100, 100))
+        # Задаем границы описывающего прямоугольника
+        self.rect = self.image.get_rect()
+
+# Инициализируем pygame
+pygame.init()
+
+# Задаем ширину
+width = 1000
+# Задаем высоту
+height = 500
+
+# Создаем окно
+win = pygame.display.set_mode((width, height))
+
+# Создаем переменную группы спрайтов
+all_sprites = pygame.sprite.Group()
+
+# Создаем игрока
+player = Player(all_sprites)
+
+# Создаем противника
+enemy_sprites = pygame.sprite.Group()
+# Указываем ему позицию слева в 200 пикселей
+Enemy.rect.left = 200
+
+# Добавляем игрока в группу спрайтов
+all_sprites.add(player)
+
+# Создаем группу спрайтов противников
+enemy_sprites = pygame.sprite.Group()
+
+# Добавляем противника в группу спрайтов противников
+enemy_sprites.add(Enemy)
+
+FPS = 60
+clock = pygame.time.Clock()
+# Бесконечный игровой цикл
+while True:
+    # Перебираем все события
+    for event in pygame.event.get():
+        # Если произошло событие закрытия(нажали на крестик или ALT + F4)
+        if event.type == pygame.QUIT:
+            # Выходим из игры
+            exit()
+
+    # Определяем есть ли соприкосновение игрока с каким-либо спрайтом из группы спрайтов противников
+    # Здесь player - сам игрок, enemy_sprites - группа спрайтов противников, True - нужно ли удалять спрайт при столкновении
+    hits = pygame.sprite.spritecollide(player, enemy_sprites, True)
+    # Заливаем задний фон белый цветом
+    win.fill((255, 255, 255))
+    # Рисуем все спрайты, который есть в группе
+    all_sprites.draw(win)
+    enemy_sprites.draw(win)
+    bullets_sprites.draw(win)
+    bullets_sprites.update()
+    # Обновляем спрайты
+    all_sprites.update()
+    enemy_sprites.update()
+    # Обновляем экран
+    pygame.disp
