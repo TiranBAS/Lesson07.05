@@ -35,7 +35,14 @@ while not Common.game_over:
 
     render()
 
+while not game_over:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+            timer.join()
+            exit()
 
+    render()
 
 
 
@@ -94,7 +101,10 @@ while True:
     enemy_sprites.draw()
     bullets_sprites.draw()
     bullets_sprites.update()
-    # Обновляем спрайты
+    pygame.display.update()
+    clock.tick(60)
+    pygame.quit()
+# Обновляем спрайты
     all_sprites.update()
     enemy_sprites.update()
     # Обновляем экран
