@@ -37,16 +37,9 @@ walls = []
 
 pygame.mixer.init()
 
-# Загрузка и запуск музыки
 pygame.mixer.music.load('3d20874f20174bd.mp3')
-pygame.mixer.music.play(-1)  # зациклить музыку
-
-# Основной цикл игры (пример)
+pygame.mixer.music.play(-1)
 running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
 time_left = 10  # 10 секунд
 font = pygame.font.Font(None, 50)# None - Название шрифта, 20 - размер
@@ -78,7 +71,7 @@ def stop_timer():
     running = False
 
 
-stop_thread = Timer(37, stop_timer)
+stop_thread = Timer(40, stop_timer) #время
 stop_thread.start()
 
 
@@ -105,7 +98,6 @@ def Roon(level):
 
 level = Roon(levels[current_level])
 clock = pygame.time.Clock()
-running = True
 
 
 def draw_game():
